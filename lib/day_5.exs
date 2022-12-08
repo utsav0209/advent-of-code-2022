@@ -1,4 +1,4 @@
-defmodule Day4 do
+defmodule Day5 do
   defp read_input() do
     File.stream!("lib/inputs/day_5.input", [:read])
     |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
@@ -111,5 +111,5 @@ defmodule Day4 do
   end
 end
 
-IO.puts("Solve 1: #{Day4.solve_1()}")
-IO.puts("Solve 2: #{Day4.solve_2()}")
+IO.puts("Solve 1: #{Day5.solve_1()}")
+IO.puts("Solve 2: #{Day5.solve_2()}")
