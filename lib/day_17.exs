@@ -42,35 +42,52 @@ defmodule Day17 do
   end
 
   defp get_tower_height(jets, target_rocks) do
+    case find_loop(jets, target_rocks) do
+      {period_start, period_end, jets, tower, base_height, height} ->
+        period_length = period_end - period_start + 1
+        number_of_periods = div(target_rocks - period_start - 1, period_length)
+
+        remaining_start = period_start + period_length * number_of_periods
+
+        {_, _, rest_height} =
+          Enum.reduce(remaining_start..target_rocks, {jets, tower, height}, &make_rock_fall/2)
+
+        (height - base_height) * (number_of_periods - 1) + rest_height
+
+      {_, _, height, _} ->
+        height
+    end
+  end
+
+  defp find_loop(jets, target_rocks) do
     tower = 0..6 |> Enum.map(fn x -> {x, 0} end) |> MapSet.new()
 
-    {period_start, period_end, jets, tower, base_height, height} =
-      Enum.reduce_while(
-        1..target_rocks,
-        {jets, tower, 0, %{}},
-        fn rock, {jets, tower, height, seen} ->
-          {_, jet_index} = hd(jets)
-          key = {rem(rock, length(@rocks)), jet_index}
+    Enum.reduce_while(
+      1..target_rocks,
+      {jets, tower, 0, %{}},
+      fn rock, {jets, tower, height, seen} ->
+        {_, jet_index} = hd(jets)
+        key = {rem(rock, length(@rocks)), jet_index}
 
-          if(Map.has_key?(seen, key)) do
-            {start, base_height} = Map.get(seen, key)
-            {:halt, {start, rock - 1, jets, tower, base_height, height}}
-          else
-            {new_jets, new_tower, new_height} = make_rock_fall(rock, {jets, tower, height})
-            {:cont, {new_jets, new_tower, new_height, Map.put(seen, key, {rock, height})}}
+        if(Map.has_key?(seen, key)) do
+          case Map.get(seen, key) do
+            {_, _, :first} ->
+              {new_jets, new_tower, new_height} = make_rock_fall(rock, {jets, tower, height})
+
+              {
+                :cont,
+                {new_jets, new_tower, new_height, Map.put(seen, key, {rock, height, :second})}
+              }
+
+            {start, base_height, :second} ->
+              {:halt, {start, rock - 1, jets, tower, base_height, height}}
           end
+        else
+          {new_jets, new_tower, new_height} = make_rock_fall(rock, {jets, tower, height})
+          {:cont, {new_jets, new_tower, new_height, Map.put(seen, key, {rock, height, :first})}}
         end
-      )
-
-    period_length = period_end - period_start + 1
-    number_of_periods = div(target_rocks - period_start - 1, period_length)
-
-    remaining_start = period_start + period_length * number_of_periods
-
-    {_, _, rest_height} =
-      Enum.reduce(remaining_start..target_rocks, {jets, tower, height}, &make_rock_fall/2)
-
-    (height - base_height) * (number_of_periods - 1) + rest_height
+      end
+    )
   end
 
   defp make_rock_fall(round, {jets, tower, height}) do
