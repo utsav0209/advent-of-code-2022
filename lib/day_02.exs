@@ -4,10 +4,27 @@ defmodule Day2 do
   @lose 0
 
   defp read_input() do
-    File.stream!("lib/inputs/day_2.input", [:read])
+    File.stream!("lib/inputs/day_02.input", [:read])
     |> Stream.map(&String.trim_trailing/1)
     |> Enum.to_list()
     |> Enum.map(fn str -> String.split(str) end)
+  end
+
+  def solve_1() do
+    read_input()
+    |> Enum.map(fn lst -> Enum.map(lst, fn move -> convert_move_to_atom(move) end) end)
+    |> Enum.map(&List.to_tuple/1)
+    |> Enum.map(fn {m1, m2} -> get_outcome_score(m1, m2) + get_move_score(m2) end)
+    |> Enum.sum()
+  end
+
+  def solve_2() do
+    read_input()
+    |> Enum.map(&List.to_tuple/1)
+    |> Enum.map(fn {m1, m2} -> {convert_move_to_atom(m1), convert_move_to_condition(m2)} end)
+    |> Enum.map(fn {m1, con} -> {m1, get_sign_for_given_condition(m1, con)} end)
+    |> Enum.map(fn {m1, m2} -> get_outcome_score(m1, m2) + get_move_score(m2) end)
+    |> Enum.sum()
   end
 
   defp convert_move_to_atom(move) do
@@ -71,23 +88,6 @@ defmodule Day2 do
       {:scissor, :draw} -> :scissor
       {:scissor, :lose} -> :paper
     end
-  end
-
-  def solve_1() do
-    read_input()
-    |> Enum.map(fn lst -> Enum.map(lst, fn move -> convert_move_to_atom(move) end) end)
-    |> Enum.map(&List.to_tuple/1)
-    |> Enum.map(fn {m1, m2} -> get_outcome_score(m1, m2) + get_move_score(m2) end)
-    |> Enum.sum()
-  end
-
-  def solve_2() do
-    read_input()
-    |> Enum.map(&List.to_tuple/1)
-    |> Enum.map(fn {m1, m2} -> {convert_move_to_atom(m1), convert_move_to_condition(m2)} end)
-    |> Enum.map(fn {m1, con} -> {m1, get_sign_for_given_condition(m1, con)} end)
-    |> Enum.map(fn {m1, m2} -> get_outcome_score(m1, m2) + get_move_score(m2) end)
-    |> Enum.sum()
   end
 end
 

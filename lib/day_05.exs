@@ -1,8 +1,18 @@
 defmodule Day5 do
   defp read_input() do
-    File.stream!("lib/inputs/day_5.input", [:read])
+    File.stream!("lib/inputs/day_05.input", [:read])
     |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
     |> Enum.to_list()
+  end
+
+  def solve_1() do
+    get_stacks_and_moves()
+    |> make_moves(true)
+  end
+
+  def solve_2() do
+    get_stacks_and_moves()
+    |> make_moves(false)
   end
 
   defp parse_row(row) do
@@ -98,16 +108,6 @@ defmodule Day5 do
       move_items_in_stacks(acc_stack, from, to, to_move)
     end)
     |> Enum.map(&hd/1)
-  end
-
-  def solve_1() do
-    get_stacks_and_moves()
-    |> make_moves(true)
-  end
-
-  def solve_2() do
-    get_stacks_and_moves()
-    |> make_moves(false)
   end
 end
 

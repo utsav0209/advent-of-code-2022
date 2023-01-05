@@ -1,6 +1,37 @@
 defmodule Day8 do
   @directions [:left, :right, :top, :bottom]
 
+  defp read_input() do
+    File.stream!("lib/inputs/day_08.input", [:read])
+    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
+    |> Enum.to_list()
+    |> Enum.map(fn row -> String.graphemes(row) |> Enum.map(&String.to_integer/1) end)
+  end
+
+  def solve_1() do
+    read_input()
+    |> then(fn data ->
+      Enum.with_index(data)
+      |> Enum.map(fn {row, index} ->
+        process_row_for_visibility(row, index, data, length(data))
+      end)
+    end)
+    |> Enum.map(fn row -> Enum.filter(row, fn col -> col end) |> length() end)
+    |> Enum.sum()
+  end
+
+  def solve_2() do
+    read_input()
+    |> then(fn data ->
+      Enum.with_index(data)
+      |> Enum.map(fn {row, index} ->
+        process_row_and_calculate_scenic_score(row, index, data)
+      end)
+    end)
+    |> List.flatten()
+    |> Enum.max()
+  end
+
   defp get_elements_in_direction(data, index_r, index_c, direction) do
     case direction do
       :left ->
@@ -88,37 +119,6 @@ defmodule Day8 do
           calculate_scenic_score(height, index_r, index_c, data)
         end)
       end)
-
-  defp read_input() do
-    File.stream!("lib/inputs/day_8.input", [:read])
-    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
-    |> Enum.to_list()
-    |> Enum.map(fn row -> String.graphemes(row) |> Enum.map(&String.to_integer/1) end)
-  end
-
-  def solve_1() do
-    read_input()
-    |> then(fn data ->
-      Enum.with_index(data)
-      |> Enum.map(fn {row, index} ->
-        process_row_for_visibility(row, index, data, length(data))
-      end)
-    end)
-    |> Enum.map(fn row -> Enum.filter(row, fn col -> col end) |> length() end)
-    |> Enum.sum()
-  end
-
-  def solve_2() do
-    read_input()
-    |> then(fn data ->
-      Enum.with_index(data)
-      |> Enum.map(fn {row, index} ->
-        process_row_and_calculate_scenic_score(row, index, data)
-      end)
-    end)
-    |> List.flatten()
-    |> Enum.max()
-  end
 end
 
 IO.puts("Solve 1: #{Day8.solve_1()}")

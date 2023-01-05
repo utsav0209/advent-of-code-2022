@@ -1,8 +1,22 @@
 defmodule Day4 do
   defp read_input() do
-    File.stream!("lib/inputs/day_4.input", [:read])
+    File.stream!("lib/inputs/day_04.input", [:read])
     |> Stream.map(&String.trim_trailing/1)
     |> Enum.to_list()
+  end
+
+  def solve_1() do
+    read_input()
+    |> Enum.map(&parse_range_pair/1)
+    |> Enum.filter(&covers_whole_range/1)
+    |> length()
+  end
+
+  def solve_2() do
+    read_input()
+    |> Enum.map(&parse_range_pair/1)
+    |> Enum.filter(&does_overlap/1)
+    |> length()
   end
 
   def parse_range_pair(pair) do
@@ -33,20 +47,6 @@ defmodule Day4 do
       true ->
         l1 <= r2
     end
-  end
-
-  def solve_1() do
-    read_input()
-    |> Enum.map(&parse_range_pair/1)
-    |> Enum.filter(&covers_whole_range/1)
-    |> length()
-  end
-
-  def solve_2() do
-    read_input()
-    |> Enum.map(&parse_range_pair/1)
-    |> Enum.filter(&does_overlap/1)
-    |> length()
   end
 end
 

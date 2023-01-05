@@ -1,5 +1,33 @@
 defmodule Day10 do
-  @track_cycles [20, 60, 100, 140, 180, 220]
+  defp read_input() do
+    File.stream!("lib/inputs/day_10.input", [:read])
+    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
+    |> Enum.to_list()
+  end
+
+  def solve_1() do
+    read_input()
+    |> Enum.reduce({1, 0, []}, fn command, acc -> execute(command, acc) end)
+    |> elem(2)
+    |> Enum.sum()
+  end
+
+  def solve_2() do
+    read_input()
+    |> Enum.reduce({1, 0, []}, fn command, acc -> draw(command, acc) end)
+    |> elem(2)
+    |> Enum.reverse()
+    |> Enum.map(fn x ->
+      x
+      |> Enum.map(fn
+        '.' -> ' '
+        _ -> '█'
+      end)
+      |> Enum.reverse()
+      |> Enum.join("")
+    end)
+    |> Enum.join("\n")
+  end
 
   defp track(x, cycle, signals) when rem(cycle - 20, 40) == 0, do: signals ++ [x * cycle]
 
@@ -19,7 +47,7 @@ defmodule Day10 do
   end
 
   defp get_symbol(x, cycle) when abs(rem(cycle - 1, 40) - x) <= 1, do: '#'
-  defp get_symbol(x, cycle), do: '.'
+  defp get_symbol(_, _), do: '.'
 
   defp trace(x, cycle, []) do
     [[get_symbol(x, cycle)]]
@@ -46,28 +74,6 @@ defmodule Day10 do
         drawing = trace(x, cycle + 2, drawing)
         {x + String.to_integer(count), cycle + 2, drawing}
     end
-  end
-
-  defp read_input() do
-    File.stream!("lib/inputs/day_10.input", [:read])
-    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
-    |> Enum.to_list()
-  end
-
-  def solve_1() do
-    read_input()
-    |> Enum.reduce({1, 0, []}, fn command, acc -> execute(command, acc) end)
-    |> elem(2)
-    |> Enum.sum()
-  end
-
-  def solve_2() do
-    read_input()
-    |> Enum.reduce({1, 0, []}, fn command, acc -> draw(command, acc) end)
-    |> elem(2)
-    |> Enum.reverse()
-    |> Enum.map(fn x -> Enum.reverse(x) |> Enum.join(" ") end)
-    |> Enum.join("\n")
   end
 end
 

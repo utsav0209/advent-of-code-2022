@@ -1,4 +1,32 @@
 defmodule Day9 do
+  defp read_input() do
+    File.stream!("lib/inputs/day_09.input", [:read])
+    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
+    |> Enum.to_list()
+    |> Enum.map(&String.split/1)
+    |> Enum.map(&List.to_tuple/1)
+  end
+
+  def solve_1() do
+    read_input()
+    |> Enum.reduce(
+      {List.duplicate({0, 0}, 2), MapSet.new([{0, 0}])},
+      &make_moves/2
+    )
+    |> elem(1)
+    |> MapSet.size()
+  end
+
+  def solve_2() do
+    read_input()
+    |> Enum.reduce(
+      {List.duplicate({0, 0}, 10), MapSet.new([{0, 0}])},
+      &make_moves/2
+    )
+    |> elem(1)
+    |> MapSet.size()
+  end
+
   defguard is_touching(tail, head)
            when abs(elem(head, 0) - elem(tail, 0)) <= 1 and
                   abs(elem(head, 1) - elem(tail, 1)) <= 1
@@ -39,34 +67,6 @@ defmodule Day9 do
       {rope, visited_locs},
       fn _, acc -> make_a_move(direction, acc) end
     )
-  end
-
-  defp read_input() do
-    File.stream!("lib/inputs/day_9.input", [:read])
-    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
-    |> Enum.to_list()
-    |> Enum.map(&String.split/1)
-    |> Enum.map(&List.to_tuple/1)
-  end
-
-  def solve_1() do
-    read_input()
-    |> Enum.reduce(
-      {List.duplicate({0, 0}, 2), MapSet.new([{0, 0}])},
-      &make_moves/2
-    )
-    |> elem(1)
-    |> MapSet.size()
-  end
-
-  def solve_2() do
-    read_input()
-    |> Enum.reduce(
-      {List.duplicate({0, 0}, 10), MapSet.new([{0, 0}])},
-      &make_moves/2
-    )
-    |> elem(1)
-    |> MapSet.size()
   end
 end
 

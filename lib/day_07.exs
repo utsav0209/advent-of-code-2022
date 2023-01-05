@@ -3,6 +3,28 @@ defmodule Day7 do
   @required_size 30_000_000
   @max_dir_size 100_000
 
+  defp read_input() do
+    File.stream!("lib/inputs/day_07.input", [:read])
+    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
+    |> Enum.to_list()
+  end
+
+  def solve_1() do
+    read_input()
+    |> parse()
+    |> Map.values()
+    |> Enum.filter(fn v -> v <= @max_dir_size end)
+    |> Enum.sum()
+  end
+
+  def solve_2() do
+    read_input()
+    |> parse()
+    |> Map.to_list()
+    |> Enum.sort(fn {_k1, v1}, {_k2, v2} -> v1 <= v2 end)
+    |> find_minimum_to_delete()
+  end
+
   defp parse(command), do: parse(command, %{}, [])
 
   defp parse([], tree, _current_path), do: tree
@@ -48,33 +70,11 @@ defmodule Day7 do
     find_minimum_to_delete(tl(tree), List.last(tree))
   end
 
-  defp find_minimum_to_delete([{_curr, curr_size} | rest], {_parent, parent_size})
+  defp find_minimum_to_delete([{_curr, curr_size} | _], {_parent, parent_size})
        when @total_size - parent_size + curr_size >= @required_size,
        do: curr_size
 
   defp find_minimum_to_delete([_ | rest], root), do: find_minimum_to_delete(rest, root)
-
-  defp read_input() do
-    File.stream!("lib/inputs/day_7.input", [:read])
-    |> Stream.map(fn str -> String.trim_trailing(str, "\n") end)
-    |> Enum.to_list()
-  end
-
-  def solve_1() do
-    read_input()
-    |> parse()
-    |> Map.values()
-    |> Enum.filter(fn v -> v <= @max_dir_size end)
-    |> Enum.sum()
-  end
-
-  def solve_2() do
-    read_input()
-    |> parse()
-    |> Map.to_list()
-    |> Enum.sort(fn {_k1, v1}, {_k2, v2} -> v1 <= v2 end)
-    |> find_minimum_to_delete()
-  end
 end
 
 IO.puts("Solve 1: #{Day7.solve_1()}")

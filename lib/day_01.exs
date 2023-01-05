@@ -1,18 +1,8 @@
 defmodule Day1 do
   defp read_input() do
-    File.stream!("lib/inputs/day_1.input", [:read])
+    File.stream!("lib/inputs/day_01.input", [:read])
     |> Stream.map(&String.trim_trailing/1)
     |> Enum.to_list()
-  end
-
-  defp get_calories_per_elf() do
-    read_input()
-    |> Enum.reduce([], fn
-      s, [] -> [String.to_integer(s)]
-      "", acc -> [0] ++ acc
-      n, [h | t] -> [String.to_integer(n) + h] ++ t
-    end)
-    |> Enum.reverse()
   end
 
   def solve_1() do
@@ -25,6 +15,16 @@ defmodule Day1 do
     |> Enum.sort()
     |> Enum.take(-3)
     |> Enum.sum()
+  end
+
+  defp get_calories_per_elf() do
+    read_input()
+    |> Enum.reduce([], fn
+      s, [] -> [String.to_integer(s)]
+      "", acc -> [0] ++ acc
+      n, [h | t] -> [String.to_integer(n) + h] ++ t
+    end)
+    |> Enum.reverse()
   end
 end
 

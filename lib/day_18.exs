@@ -124,17 +124,13 @@ defmodule Day18 do
   end
 
   defp has_path_to_external?(
-         [cube | other_cubes] = cubess,
+         [cube | other_cubes],
          external_cubes,
          internal_cubes,
          lava_cubes,
          explored,
          limits
        ) do
-    # IO.inspect(length(cubess))
-    # IO.inspect(length(Enum.uniq(cubess)))
-    # IO.inspect(MapSet.size(explored))
-
     cond do
       MapSet.member?(external_cubes, cube) ->
         {true, external_cubes, internal_cubes}

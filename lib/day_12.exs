@@ -51,21 +51,6 @@ defmodule Day12 do
     end
   end
 
-  defp parse_cell(cell) do
-    point = %{start: false, end: false, elevation: -1}
-
-    cond do
-      cell == hd('S') ->
-        %{point | start: true, elevation: 0}
-
-      cell == hd('E') ->
-        %{point | end: true, elevation: 25}
-
-      true ->
-        %{point | elevation: cell - hd('a')}
-    end
-  end
-
   defp add_cell({cell, x}, state, y) do
     point = {x, y}
 
